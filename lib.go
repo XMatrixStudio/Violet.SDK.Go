@@ -4,6 +4,8 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/hex"
 	"errors"
 	"io"
@@ -11,9 +13,11 @@ import (
 	"time"
 )
 
-// AesEncrypt 加密字符串
-func AesEncrypt(plaintext string) (string, error) {
-	block, err := aes.NewCipher(ClientKey)
+// AesEncrypt 加密
+func AesEncrypt(text string) (string, error) {
+	key := sha256.Sum256(ClientKey)
+	plaintext := []byte(text)
+	block, err := aes.NewCipher(key[:])
 	if err != nil {
 		return "", err
 	}
@@ -22,19 +26,19 @@ func AesEncrypt(plaintext string) (string, error) {
 	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
 		return "", err
 	}
-	cipher.NewCFBEncrypter(block, iv).XORKeyStream(ciphertext[aes.BlockSize:],
-		[]byte(plaintext))
+	stream := cipher.NewCFBEncrypter(block, iv)
+	stream.XORKeyStream(ciphertext[aes.BlockSize:], plaintext)
 	return hex.EncodeToString(ciphertext), nil
-
 }
 
-// AesDecrypt 解密字符串
-func AesDecrypt(d string) (string, error) {
-	ciphertext, err := hex.DecodeString(d)
+// AesDecrypt 解密
+func AesDecrypt(cryptoText string) (string, error) {
+	key := sha256.Sum256(ClientKey)
+	ciphertext, err := hex.DecodeString(cryptoText)
 	if err != nil {
 		return "", err
 	}
-	block, err := aes.NewCipher(ClientKey)
+	block, err := aes.NewCipher(key[:])
 	if err != nil {
 		return "", err
 	}
@@ -43,10 +47,19 @@ func AesDecrypt(d string) (string, error) {
 	}
 	iv := ciphertext[:aes.BlockSize]
 	ciphertext = ciphertext[aes.BlockSize:]
-	cipher.NewCFBDecrypter(block, iv).XORKeyStream(ciphertext, ciphertext)
+	stream := cipher.NewCFBDecrypter(block, iv)
+	stream.XORKeyStream(ciphertext, ciphertext)
 	return string(ciphertext), nil
 }
 
+// GetNowTime 获取时间戳
 func GetNowTime() string {
 	return strconv.FormatInt(time.Now().Unix()*1000, 10)
+}
+
+// GetHash 获取Hash512
+func GetHash(str string) string {
+	h := sha512.New()
+	h.Write([]byte(str))
+	return hex.EncodeToString(h.Sum(nil))
 }

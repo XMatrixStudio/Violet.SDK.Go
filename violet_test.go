@@ -17,13 +17,13 @@ func Test_Division_1(t *testing.T) {
 }
 
 func Test_Division_2(t *testing.T) {
-	se, err := AesEncrypt("aes-20170416-30-1000")
+	se, err := AesEncrypt(strconv.FormatInt(time.Now().Unix()*1000, 10))
+	fmt.Println("t: ", strconv.FormatInt(time.Now().Unix(), 10))
 	fmt.Println(se, err)
-	se = se + "2333"
-	sd, err := AesDecrypt(se)
-	fmt.Println(sd, err)
-	tm, err := strconv.ParseInt(sd, 10, 64)
-	fmt.Println(tm, err)
-	tms := time.Unix(tm, 0)
-	fmt.Println(tms)
+	valid := CheckState(se)
+	fmt.Println(valid)
+}
+
+func Test_Division_3(t *testing.T) {
+	fmt.Println(GetHash("hello, world"))
 }
