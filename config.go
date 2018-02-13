@@ -2,7 +2,7 @@ package violetSdk
 
 var (
 	// ClientID ID
-	ClientID = []byte("id")
+	ClientID = "id"
 	// ClientKey KEY
 	ClientKey = []byte("dg7j5jwp8jdeca1k9rhk9qtq")
 	// ServerHost 服务器地址

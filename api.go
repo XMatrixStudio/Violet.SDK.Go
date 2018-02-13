@@ -22,7 +22,7 @@ func GetUserBaseInfo(userID, userAuth string) (string, error) {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(`{"accessToken":"` + userAuth + `", "clientSecret":"` + getClientSecret() + `", "userId":"` + userID + `"}`).
-		Get(ServerHost + "/user/BaseData")
+		Get(ServerHost + "/users/BaseData")
 	return resp.String(), err
 }
 

@@ -2,13 +2,14 @@ package violetSdk
 
 import (
 	"fmt"
-	"strconv"
 	"testing"
-	"time"
 )
 
+var globeState = ""
+
 func Test_Division_1(t *testing.T) {
-	res, err := GetToken("abdce")
+	fmt.Println("GetToken: ")
+	res, err := GetToken("code")
 	if err != nil {
 		t.Error(err)
 	} else {
@@ -17,13 +18,27 @@ func Test_Division_1(t *testing.T) {
 }
 
 func Test_Division_2(t *testing.T) {
-	se, err := AesEncrypt(strconv.FormatInt(time.Now().Unix()*1000, 10))
-	fmt.Println("t: ", strconv.FormatInt(time.Now().Unix(), 10))
-	fmt.Println(se, err)
-	valid := CheckState(se)
-	fmt.Println(valid)
+	fmt.Println("GetUserBaseInfo: ")
+	res, err := GetUserBaseInfo("userID", "userAuth")
+	if err != nil {
+		t.Error(err)
+	} else {
+		fmt.Println(res)
+	}
 }
 
 func Test_Division_3(t *testing.T) {
-	fmt.Println(GetHash("hello, world"))
+	fmt.Println("ClientSecret: ", getClientSecret())
+}
+
+func Test_Division_4(t *testing.T) {
+	url, state := GetLoginURL("redirectURL")
+	fmt.Println("GetLoginURL: ", url)
+	fmt.Println("GetLoginState: ", state)
+	globeState = state
+}
+
+func Test_Division_5(t *testing.T) {
+	fmt.Println("CheckState[true]: ", CheckState(globeState))
+	fmt.Println("CheckState[false]: ", CheckState("state"))
 }
