@@ -8,6 +8,42 @@ import (
 	"github.com/go-resty/resty"
 )
 
+// Login 直接登陆
+func Login(userName, userPass string) (string, error) {
+	resp, err := resty.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(`{"userName": "` + userName + `", "userPass":"` + userPass + `", "clientSecret":"` + getClientSecret() + `"}`).
+		Post(ServerHost + "/api/Login")
+	return resp.String(), err
+}
+
+// Register 直接注册
+func Register(userName, userEmail, userPass string) (string, error) {
+	resp, err := resty.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(`{"name": "` + userName + `","email": "` + userEmail + `" "userPass":"` + userPass + `", "clientSecret":"` + getClientSecret() + `"}`).
+		Post(ServerHost + "/api/Register")
+	return resp.String(), err
+}
+
+// ChangePassword 直接更改密码
+func ChangePassword(userEmail, userPass, vCode string) (string, error) {
+	resp, err := resty.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(`{"vCode": "` + vCode + `","email": "` + userEmail + `", "password":"` + userPass + `", "clientSecret":"` + getClientSecret() + `"}`).
+		Post(ServerHost + "/api/ChangePassword")
+	return resp.String(), err
+}
+
+// GetEmailCode 获取邮箱验证码
+func GetEmailCode(userEmail string) (string, error) {
+	resp, err := resty.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(`{"email": "` + userEmail + `", "clientSecret":"` + getClientSecret() + `"}`).
+		Post(ServerHost + "/api/ChangePassword")
+	return resp.String(), err
+}
+
 // GetToken 获取Token
 func GetToken(code string) (string, error) {
 	resp, err := resty.R().
@@ -26,17 +62,17 @@ func GetUserBaseInfo(userID, userAuth string) (string, error) {
 	return resp.String(), err
 }
 
-// getClientSecret 获取站点密钥
-func getClientSecret() string {
-	secret, _ := AesEncrypt(GetNowTime())
-	return fmt.Sprintf("%v&%v&%v", ClientID, secret, GetHash(secret+string(ClientKey[:24])))
-}
-
 // GetLoginURL 获取登陆地址
 func GetLoginURL(redirectURL string) (url, state string) {
 	state, _ = AesEncrypt(GetNowTime())
 	url = fmt.Sprintf("%v?responseType=code&clientId=%v&state=%v&redirectUrl=%v", LoginURL, ClientID, state, redirectURL)
 	return
+}
+
+// getClientSecret 获取站点密钥
+func getClientSecret() string {
+	secret, _ := AesEncrypt(GetNowTime())
+	return fmt.Sprintf("%v&%v&%v", ClientID, secret, GetHash(secret+string(ClientKey[:24])))
 }
 
 // CheckState 检测State的正确性
