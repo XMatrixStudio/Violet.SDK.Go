@@ -9,75 +9,75 @@ import (
 )
 
 // Login 直接登陆
-func Login(userName, userPass string) (string, error) {
+func (v *Violet) Login(userName, userPass string) (string, error) {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
-		SetBody(`{"userName": "` + userName + `", "userPass":"` + userPass + `", "clientSecret":"` + getClientSecret() + `"}`).
-		Post(ServerHost + "/api/Login")
+		SetBody(`{"userName": "` + userName + `", "userPass":"` + userPass + `", "clientSecret":"` + v.getClientSecret() + `"}`).
+		Post(v.Config.ServerHost + "/api/Login")
 	return resp.String(), err
 }
 
 // Register 直接注册
-func Register(userName, userEmail, userPass string) (string, error) {
+func (v *Violet) Register(userName, userEmail, userPass string) (string, error) {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
-		SetBody(`{"name": "` + userName + `","email": "` + userEmail + `" "userPass":"` + userPass + `", "clientSecret":"` + getClientSecret() + `"}`).
-		Post(ServerHost + "/api/Register")
+		SetBody(`{"name": "` + userName + `","email": "` + userEmail + `" "userPass":"` + userPass + `", "clientSecret":"` + v.getClientSecret() + `"}`).
+		Post(v.Config.ServerHost + "/api/Register")
 	return resp.String(), err
 }
 
 // ChangePassword 直接更改密码
-func ChangePassword(userEmail, userPass, vCode string) (string, error) {
+func (v *Violet) ChangePassword(userEmail, userPass, vCode string) (string, error) {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
-		SetBody(`{"vCode": "` + vCode + `","email": "` + userEmail + `", "password":"` + userPass + `", "clientSecret":"` + getClientSecret() + `"}`).
-		Post(ServerHost + "/api/ChangePassword")
+		SetBody(`{"vCode": "` + vCode + `","email": "` + userEmail + `", "password":"` + userPass + `", "clientSecret":"` +v.getClientSecret() + `"}`).
+		Post(v.Config.ServerHost + "/api/ChangePassword")
 	return resp.String(), err
 }
 
 // GetEmailCode 获取邮箱验证码
-func GetEmailCode(userEmail string) (string, error) {
+func (v *Violet) GetEmailCode(userEmail string) (string, error) {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
-		SetBody(`{"email": "` + userEmail + `", "clientSecret":"` + getClientSecret() + `"}`).
-		Post(ServerHost + "/api/ChangePassword")
+		SetBody(`{"email": "` + userEmail + `", "clientSecret":"` + v.getClientSecret() + `"}`).
+		Post(v.Config.ServerHost + "/api/ChangePassword")
 	return resp.String(), err
 }
 
 // GetToken 获取Token
-func GetToken(code string) (string, error) {
+func (v *Violet)GetToken(code string) (string, error) {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
-		SetBody(`{"grantType":"authorization_code", "clientSecret":"` + getClientSecret() + `", "code":"` + code + `"}`).
-		Get(ServerHost + "/verify/Token")
+		SetBody(`{"grantType":"authorization_code", "clientSecret":"` + v.getClientSecret() + `", "code":"` + code + `"}`).
+		Get(v.Config.ServerHost + "/verify/Token")
 	return resp.String(), err
 }
 
 // GetUserBaseInfo 获取用户基本信息
-func GetUserBaseInfo(userID, userAuth string) (string, error) {
+func(v *Violet) GetUserBaseInfo(userID, userAuth string) (string, error) {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
-		SetBody(`{"accessToken":"` + userAuth + `", "clientSecret":"` + getClientSecret() + `", "userId":"` + userID + `"}`).
-		Get(ServerHost + "/users/BaseData")
+		SetBody(`{"accessToken":"` + userAuth + `", "clientSecret":"` + v.getClientSecret() + `", "userId":"` + userID + `"}`).
+		Get(v.Config.ServerHost + "/users/BaseData")
 	return resp.String(), err
 }
 
 // GetLoginURL 获取登陆地址
-func GetLoginURL(redirectURL string) (url, state string) {
-	state, _ = AesEncrypt(GetNowTime())
-	url = fmt.Sprintf("%v?responseType=code&clientId=%v&state=%v&redirectUrl=%v", LoginURL, ClientID, state, redirectURL)
+func (v *Violet) GetLoginURL(redirectURL string) (url, state string) {
+	state, _ = v.AesEncrypt(GetNowTime())
+	url = fmt.Sprintf("%v?responseType=code&clientId=%v&state=%v&redirectUrl=%v", v.Config.LoginURL, v.Config.ClientID, state, redirectURL)
 	return
 }
 
 // getClientSecret 获取站点密钥
-func getClientSecret() string {
-	secret, _ := AesEncrypt(GetNowTime())
-	return fmt.Sprintf("%v&%v&%v", ClientID, secret, GetHash(secret+string(ClientKey[:24])))
+func (v *Violet) getClientSecret() string {
+	secret, _ := v.AesEncrypt(GetNowTime())
+	return fmt.Sprintf("%v&%v&%v", v.Config.ClientID, secret, GetHash(secret + v.Config.ClientKey))
 }
 
 // CheckState 检测State的正确性
-func CheckState(state string) bool {
-	b, err := AesDecrypt(state)
+func (v *Violet) CheckState(state string) bool {
+	b, err := v.AesDecrypt(state)
 	if err != nil {
 		return false
 	}

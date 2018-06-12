@@ -14,8 +14,8 @@ import (
 )
 
 // AesEncrypt 加密
-func AesEncrypt(text string) (string, error) {
-	key := sha256.Sum256(ClientKey)
+func (v *Violet)AesEncrypt(text string) (string, error) {
+	key := sha256.Sum256([]byte(v.Config.ClientKey))
 	plaintext := []byte(text)
 	block, err := aes.NewCipher(key[:])
 	if err != nil {
@@ -32,8 +32,8 @@ func AesEncrypt(text string) (string, error) {
 }
 
 // AesDecrypt 解密
-func AesDecrypt(cryptoText string) (string, error) {
-	key := sha256.Sum256(ClientKey)
+func(v *Violet) AesDecrypt(cryptoText string) (string, error) {
+	key :=sha256.Sum256([]byte(v.Config.ClientKey))
 	ciphertext, err := hex.DecodeString(cryptoText)
 	if err != nil {
 		return "", err
