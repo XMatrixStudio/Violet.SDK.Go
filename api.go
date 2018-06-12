@@ -49,7 +49,7 @@ func (v *Violet) GetToken(code string) (*resty.Response, error) {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(`{"grantType":"authorization_code", "clientSecret":"` + v.getClientSecret() + `", "code":"` + code + `"}`).
-		Get(v.Config.ServerHost + "/verify/Token")
+		Post(v.Config.ServerHost + "/api/Token")
 	return resp, err
 }
 
@@ -58,7 +58,7 @@ func (v *Violet) GetUserBaseInfo(userID, userAuth string) (*resty.Response, erro
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(`{"accessToken":"` + userAuth + `", "clientSecret":"` + v.getClientSecret() + `", "userId":"` + userID + `"}`).
-		Get(v.Config.ServerHost + "/users/BaseData")
+		Post(v.Config.ServerHost + "/api/BaseData")
 	return resp, err
 }
 
