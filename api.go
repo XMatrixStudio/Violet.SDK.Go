@@ -40,7 +40,7 @@ func (v *Violet) GetEmailCode(userEmail string) (*resty.Response, error) {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(`{"email": "` + userEmail + `", "clientSecret":"` + v.getClientSecret() + `"}`).
-		Post(v.Config.ServerHost + "/api/ChangePassword")
+		Post(v.Config.ServerHost + "/api/GetEmailCode")
 	return resp, err
 }
 
