@@ -21,7 +21,7 @@ func (v *Violet) Login(userName, userPass string) (*resty.Response, error) {
 func (v *Violet) Register(userName, userEmail, userPass string) (*resty.Response, error) {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
-		SetBody(`{"name": "` + userName + `","email": "` + userEmail + `" "userPass":"` + userPass + `", "clientSecret":"` + v.getClientSecret() + `"}`).
+		SetBody(`{"name": "` + userName + `","email": "` + userEmail + `", "userPass":"` + userPass + `", "clientSecret":"` + v.getClientSecret() + `"}`).
 		Post(v.Config.ServerHost + "/api/Register")
 	return resp, err
 }
