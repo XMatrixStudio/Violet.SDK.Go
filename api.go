@@ -53,6 +53,15 @@ func (v *Violet) GetToken(code string) (*resty.Response, error) {
 	return resp, err
 }
 
+// ValidEmail 验证邮箱
+func (v *Violet) ValidEmail(userEmail, vCode string) (*resty.Response, error) {
+	resp, err := resty.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(`{"email": "` + userEmail + `","vCode": "` + vCode + `", "clientSecret":"` + v.getClientSecret() + `"}`).
+		Post(v.Config.ServerHost + "/api/ValidEmail")
+	return resp, err
+}
+
 // GetUserBaseInfo 获取用户基本信息
 func (v *Violet) GetUserBaseInfo(userID, userAuth string) (*resty.Response, error) {
 	resp, err := resty.R().
