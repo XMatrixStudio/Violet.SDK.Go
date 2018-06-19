@@ -1,6 +1,8 @@
 package violetSdk
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -44,15 +46,6 @@ func (v *Violet) GetEmailCode(userEmail string) (*resty.Response, error) {
 	return resp, err
 }
 
-// GetToken 获取Token
-func (v *Violet) GetToken(code string) (*resty.Response, error) {
-	resp, err := resty.R().
-		SetHeader("Content-Type", "application/json").
-		SetBody(`{"grantType":"authorization_code", "clientSecret":"` + v.getClientSecret() + `", "code":"` + code + `"}`).
-		Post(v.Config.ServerHost + "/api/Token")
-	return resp, err
-}
-
 // ValidEmail 验证邮箱
 func (v *Violet) ValidEmail(userEmail, vCode string) (*resty.Response, error) {
 	resp, err := resty.R().
@@ -62,13 +55,67 @@ func (v *Violet) ValidEmail(userEmail, vCode string) (*resty.Response, error) {
 	return resp, err
 }
 
+// ---- 开放API -----
+
+// TokenRes Token结果
+type TokenRes struct {
+	UserID string
+	Token  string
+}
+
+// GetToken 获取Token
+func (v *Violet) GetToken(code string) (res TokenRes, err error) {
+	resp, err := resty.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(`{"grantType":"authorization_code", "clientSecret":"` + v.getClientSecret() + `", "code":"` + code + `"}`).
+		Post(v.Config.ServerHost + "/api/Token")
+	if err != nil {
+		return
+	}
+	if resp.StatusCode() != 200 {
+		err = errors.New(resp.String())
+		return
+	}
+	var tokenRes TokenRes
+	err = json.Unmarshal([]byte(resp.String()), &tokenRes)
+	return tokenRes, err
+}
+
+// UserInfoRes 用户基本信息
+type UserInfoRes struct {
+	Email string
+	Name  string
+	Info  UserInfo
+}
+
+// UserInfo 用户个性信息
+type UserInfo struct {
+	PublicEmail string
+	Email       []string
+	Bio         string
+	URL         string
+	Phone       string
+	BirthDate   string
+	Location    string
+	Avatar      string
+	Gender      int
+}
+
 // GetUserBaseInfo 获取用户基本信息
-func (v *Violet) GetUserBaseInfo(userID, userAuth string) (*resty.Response, error) {
+func (v *Violet) GetUserBaseInfo(userID, userAuth string) (res UserInfoRes, err error) {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(`{"accessToken":"` + userAuth + `", "clientSecret":"` + v.getClientSecret() + `", "userId":"` + userID + `"}`).
 		Post(v.Config.ServerHost + "/api/BaseData")
-	return resp, err
+	if err != nil {
+		return
+	}
+	if resp.StatusCode() != 200 {
+		err = errors.New(resp.String())
+		return
+	}
+	err = json.Unmarshal([]byte(resp.String()), &res)
+	return
 }
 
 // GetLoginURL 获取登陆地址
