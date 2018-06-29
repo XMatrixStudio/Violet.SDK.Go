@@ -10,49 +10,90 @@ import (
 	"github.com/go-resty/resty"
 )
 
+// LoginRes 登陆返回值
+type LoginRes struct {
+	Valid bool
+	Email string
+	Code  string
+}
+
 // Login 直接登陆
-func (v *Violet) Login(userName, userPass string) (*resty.Response, error) {
+func (v *Violet) Login(userName, userPass string) (res LoginRes, err error) {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(`{"userName": "` + userName + `", "userPass":"` + userPass + `", "clientSecret":"` + v.getClientSecret() + `"}`).
 		Post(v.Config.ServerHost + "/api/Login")
-	return resp, err
+	if err != nil {
+		return
+	}
+	// 非正常的返回码
+	if resp.StatusCode() != 200 {
+		err = errors.New(resp.String())
+		return
+	}
+	// 解析结果
+	err = json.Unmarshal([]byte(resp.String()), &res)
+	return
 }
 
 // Register 直接注册
-func (v *Violet) Register(userName, userEmail, userPass string) (*resty.Response, error) {
+func (v *Violet) Register(userName, userEmail, userPass string) error {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(`{"name": "` + userName + `","email": "` + userEmail + `", "userPass":"` + userPass + `", "clientSecret":"` + v.getClientSecret() + `"}`).
 		Post(v.Config.ServerHost + "/api/Register")
-	return resp, err
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode() != 200 {
+		return errors.New(resp.String())
+	}
+	return nil
 }
 
 // ChangePassword 直接更改密码
-func (v *Violet) ChangePassword(userEmail, userPass, vCode string) (*resty.Response, error) {
+func (v *Violet) ChangePassword(userEmail, userPass, vCode string) error {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(`{"vCode": "` + vCode + `","email": "` + userEmail + `", "password":"` + userPass + `", "clientSecret":"` + v.getClientSecret() + `"}`).
 		Post(v.Config.ServerHost + "/api/ChangePassword")
-	return resp, err
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode() != 200 {
+		return errors.New(resp.String())
+	}
+	return nil
 }
 
 // GetEmailCode 获取邮箱验证码
-func (v *Violet) GetEmailCode(userEmail string) (*resty.Response, error) {
+func (v *Violet) GetEmailCode(userEmail string) error {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(`{"email": "` + userEmail + `", "clientSecret":"` + v.getClientSecret() + `"}`).
 		Post(v.Config.ServerHost + "/api/GetEmailCode")
-	return resp, err
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode() != 200 {
+		return errors.New(resp.String())
+	}
+	return err
 }
 
 // ValidEmail 验证邮箱
-func (v *Violet) ValidEmail(userEmail, vCode string) (*resty.Response, error) {
+func (v *Violet) ValidEmail(userEmail, vCode string) error {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(`{"email": "` + userEmail + `","vCode": "` + vCode + `", "clientSecret":"` + v.getClientSecret() + `"}`).
 		Post(v.Config.ServerHost + "/api/ValidEmail")
-	return resp, err
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode() != 200 {
+		return errors.New(resp.String())
+	}
+	return err
 }
 
 // ---- 开放API -----
