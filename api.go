@@ -172,7 +172,12 @@ func (v *Violet) getClientSecret() string {
 	return fmt.Sprintf("%v&%v&%v", v.Config.ClientID, secret, GetHash(secret+v.Config.ClientKey))
 }
 
-// CheckState 检测State的正确性
+// MakeState 以当前时间生成State
+func (v *Violet) MakeState() (string, error) {
+	return v.AesDecrypt(strconv.FormatInt(time.Now().Unix(), 64))
+}
+
+// CheckState 检测State的正确性, 10分钟有效期
 func (v *Violet) CheckState(state string) bool {
 	b, err := v.AesDecrypt(state)
 	if err != nil {
@@ -183,7 +188,7 @@ func (v *Violet) CheckState(state string) bool {
 		return false
 	}
 	sec := time.Now().Sub(time.Unix(tm/1000, 0)).Seconds()
-	if sec > 60*60 || sec < 0 {
+	if sec > 10*60 || sec < 0 {
 		return false
 	}
 	return true
