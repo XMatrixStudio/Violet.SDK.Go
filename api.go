@@ -174,7 +174,7 @@ func (v *Violet) getClientSecret() string {
 
 // MakeState 以当前时间生成State
 func (v *Violet) MakeState() (string, error) {
-	return v.AesDecrypt(strconv.FormatInt(time.Now().Unix(), 64))
+	return v.AesEncrypt(strconv.FormatInt(time.Now().Unix(), 64))
 }
 
 // CheckState 检测State的正确性, 10分钟有效期
