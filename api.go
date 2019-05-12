@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"gopkg.in/resty.v1"
+	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 )
@@ -159,10 +161,53 @@ func (v *Violet) GetUserBaseInfo(userID, userAuth string) (res UserInfoRes, err 
 	return
 }
 
-// GetLoginURL 获取登陆地址
-func (v *Violet) GetLoginURL(redirectURL string) (url, state string) {
-	state, _ = v.AesEncrypt(GetNowTime())
-	url = fmt.Sprintf("%v?responseType=code&clientId=%v&state=%v&redirectUrl=%v", v.Config.LoginURL, v.Config.ClientID, state, redirectURL)
+// ScopeType 请求权限
+type ScopeType string
+
+// ScopeType 请求权限种类
+const (
+	scopeBase  ScopeType = "base"
+	ScopeInfo  ScopeType = "info"
+	ScopeEmail ScopeType = "email"
+)
+
+func (s *ScopeTypes) String() (scopes []string) {
+	for _, t := range *s {
+		scopes = append(scopes, string(t))
+	}
+	return
+}
+
+type ScopeTypes []ScopeType
+
+// AuthOption 授权选项
+type AuthOption struct {
+	Scopes    ScopeTypes // 请求额外权限列表
+	QuickMode bool       // 快速授权模式， 默认开启
+}
+
+/*
+	GetLoginURL 获取登陆地址
+
+	@param redirectURL 回调地址
+	@param options 可选选项
+
+	@return url 用户需要跳转登陆的地址
+	#return state 状态, 须与当前 Session 绑定，授权完成后须验证其有效性，防止 CSRF 攻击
+*/
+func (v *Violet) GetLoginURL(redirectURL string, options ...AuthOption) (authURL, state string, err error) {
+	scopes := ScopeTypes{scopeBase}
+	quickMode := true
+	if len(options) != 0 {
+		scopes = append(scopes, options[0].Scopes...)
+		quickMode = options[0].QuickMode
+	}
+
+
+	stateStr, err := v.makeState()
+	authURL = fmt.Sprintf("%v?responseType=code&clientId=%v&state=%v&redirectUrl=%v&quickMode=%v&scope=%v",
+		v.Config.LoginURL, v.Config.ClientID, stateStr,
+		url.QueryEscape(redirectURL), quickMode, url.QueryEscape(strings.Join(scopes.String(), ",")) )
 	return
 }
 
@@ -172,9 +217,10 @@ func (v *Violet) getClientSecret() string {
 	return fmt.Sprintf("%v&%v&%v", v.Config.ClientID, secret, GetHash(secret+v.Config.ClientKey))
 }
 
-// MakeState 以当前时间生成State
-func (v *Violet) MakeState() (string, error) {
-	return v.AesEncrypt(strconv.FormatInt(time.Now().Unix(), 64))
+// MakeState 生成State
+// State 应绑定用户信息
+func (v *Violet) makeState() (string, error) {
+	return v.AesEncrypt(strconv.FormatInt(time.Now().Unix(), 10))
 }
 
 // CheckState 检测State的正确性, 10分钟有效期

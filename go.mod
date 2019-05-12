@@ -1,4 +1,4 @@
-module github.com/XMatrixStudio/Violet.SDK.Go
+module github.com/XMatrixStudio/Violet.SDK.Go.v3
 
 go 1.12
 
