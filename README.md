@@ -1,15 +1,13 @@
 # Violet SDK for Golang
 
-
-
 ## Installation
 
-### Current Version - v3.0.5
+### Current Version - v3.0.6
 
 **go.mod**
 
 ```
-require gopkg.in/xmatrixstudio/violet.sdk.go.v3 v3.0.5
+require gopkg.in/xmatrixstudio/violet.sdk.go.v3 v3.0.6
 ```
 
 **go get**
@@ -25,8 +23,6 @@ go get -u gopkg.in/xmatrixstudio/violet.sdk.go.v3
 ```
 go get -u github.com/XMatrixStudio/Violet.SDK.Go
 ```
-
-
 
 ## Doc
 
