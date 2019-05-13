@@ -9,7 +9,7 @@
 **go.mod**
 
 ```
-gopkg.in/xmatrixstudio/violet.sdk.go.v3 v3.0.5
+require gopkg.in/xmatrixstudio/violet.sdk.go.v3 v3.0.5
 ```
 
 **go get**
