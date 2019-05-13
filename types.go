@@ -48,6 +48,7 @@ func (s *ScopeTypes) String() (scopes []string) {
 	return
 }
 
+// ScopeTypes 额外权限列表
 type ScopeTypes []ScopeType
 
 // AuthOption 授权选项

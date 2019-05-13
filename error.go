@@ -2,6 +2,7 @@ package violet
 
 import "errors"
 
+// Error 错误列表
 var (
 	ErrorInvalidKey    = errors.New("invalid_key")    // Key 无效
 	ErrorUnableDecrypt = errors.New("unable_decrypt") // 无法解密

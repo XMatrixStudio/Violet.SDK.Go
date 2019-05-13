@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-var violet *Violet = NewViolet(Config{
+var violet = NewViolet(Config{
 	ClientID:   "5cd91e09131df3397c35b079",
 	ClientKey:  "d9d91xret2h75hrwfscjcahq",
 	ServerHost: "http://localhost:3000/api",

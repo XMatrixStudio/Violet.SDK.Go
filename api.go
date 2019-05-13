@@ -3,12 +3,12 @@ package violet
 import (
 	"errors"
 	"fmt"
-	"gopkg.in/resty.v1"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
 
+	resty "gopkg.in/resty.v1"
 )
 
 // Login 直接登陆
