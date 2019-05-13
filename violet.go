@@ -17,8 +17,8 @@ type Violet struct {
 }
 
 // NewViolet ...
-func NewViolet(c Config) Violet {
-	return Violet{
+func NewViolet(c Config) *Violet {
+	return &Violet{
 		Config: c,
 	}
 }
