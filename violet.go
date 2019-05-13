@@ -2,13 +2,12 @@ package violet
 
 // Config 配置文件
 type Config struct {
-	ClientID string `yaml:"ClientID"`
-	// ClientKey KEY
-	ClientKey string `yaml:"ClientKey"`
+	// ClientID 应用ID
+	ClientID string
+	// ClientKey 应用地址
+	ClientKey string
 	// ServerHost 服务器地址
-	ServerHost string `yaml:"ServerHost"`
-	// LoginURL 登陆授权地址
-	LoginURL string `yaml:"LoginURL"`
+	ServerHost string
 }
 
 // Violet ...

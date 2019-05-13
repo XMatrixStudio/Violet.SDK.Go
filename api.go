@@ -198,8 +198,8 @@ func (v *Violet) GetLoginURL(redirectURL string, options ...AuthOption) (authURL
 		quickMode = options[0].QuickMode
 	}
 	state, err = v.makeState()
-	authURL = fmt.Sprintf("%v?responseType=code&clientId=%v&state=%v&redirectUrl=%v&quickMode=%v&scope=%v",
-		v.Config.LoginURL, v.Config.ClientID, state,
+	authURL = fmt.Sprintf("%v/verify/authorize?responseType=code&appId=%v&state=%v&redirectUrl=%v&quickMode=%v&scope=%v",
+		v.Config.ServerHost, v.Config.ClientID, state,
 		url.QueryEscape(redirectURL), quickMode, url.QueryEscape(strings.Join(scopes.String(), ",")))
 	return
 }

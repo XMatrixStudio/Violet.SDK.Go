@@ -7,8 +7,7 @@ import (
 var violet = NewViolet(Config{
 	ClientID:   "5cd91e09131df3397c35b079",
 	ClientKey:  "d9d91xret2h75hrwfscjcahq",
-	ServerHost: "http://localhost:3000/api",
-	LoginURL:   "http://localhost:3000/account/auth",
+	ServerHost: "https://love.zhenly.cn/api",
 })
 
 var code = "a18d8b33df24783d736a3eb7e234923ef336e0bbad3873205499c4801de495e6983a10c800f7df3c1e843e5b59f72183a77686bd53adb4a788dd1b26827daeb3a9bf2108b7377bc017f9e5eddd26c9d4d3878cf7efc7bf14496976901f4dc1711f"
@@ -20,7 +19,7 @@ func getViolet() *Violet {
 func TestViolet_GetLoginURL(t *testing.T) {
 	url, _, err := getViolet().GetLoginURL(
 		"https://blog.zhenly.cn/auth",
-		AuthOption{Scopes: ScopeTypes{ScopeInfo}, QuickMode: false})
+		AuthOption{Scopes: ScopeTypes{ScopeInfo}, QuickMode: true})
 	if err != nil {
 		t.Error(err)
 	}
