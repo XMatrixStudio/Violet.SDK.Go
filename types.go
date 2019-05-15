@@ -18,6 +18,7 @@ type UserInfoRes struct {
 	Bio      string
 	Birthday string
 	Email    string
+	Gender   int
 	Location string
 	Nickname string
 	Phone    string

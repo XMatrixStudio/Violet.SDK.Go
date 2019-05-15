@@ -5,12 +5,12 @@ import (
 )
 
 var violet = NewViolet(Config{
-	ClientID:   "5cd91e09131df3397c35b079",
-	ClientKey:  "d9d91xret2h75hrwfscjcahq",
+	ClientID:   "5cda7372c254be1542ae4f43",
+	ClientKey:  "gu1bzgbsf2h16ahfjrpwxbv4",
 	ServerHost: "https://love.zhenly.cn/api",
 })
 
-var code = "a18d8b33df24783d736a3eb7e234923ef336e0bbad3873205499c4801de495e6983a10c800f7df3c1e843e5b59f72183a77686bd53adb4a788dd1b26827daeb3a9bf2108b7377bc017f9e5eddd26c9d4d3878cf7efc7bf14496976901f4dc1711f"
+var code = "cc52b5372f3c3e9056b27c8b2a36942bcex73f89aed05d074b602d290d0d9c2fa9bad20b77eb56a6e00c4bcfe6da21f7cff19d76118e0ee8b16e9b440a86c130c83abdbab61b1da112d1a54e4782f12969ce8ed709e1458cb926a91189e6c59717"
 
 func getViolet() *Violet {
 	return violet
@@ -18,8 +18,9 @@ func getViolet() *Violet {
 
 func TestViolet_GetLoginURL(t *testing.T) {
 	url, _, err := getViolet().GetLoginURL(
-		"https://blog.zhenly.cn/auth",
+		"http://localhost:8080/api/session/violet",
 		AuthOption{Scopes: ScopeTypes{ScopeInfo}, QuickMode: true})
+
 	if err != nil {
 		t.Error(err)
 	}
@@ -76,4 +77,5 @@ func TestViolet_GetUserInfo(t *testing.T) {
 	t.Log("location:", info.Location)
 	t.Log("birthday:", info.Birthday)
 	t.Log("url:", info.URL)
+	t.Log("gender:", info.Gender)
 }
