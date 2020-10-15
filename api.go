@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/go-resty/resty"
+	resty "gopkg.in/resty.v1"
 )
 
 // LoginRes 登陆返回值
