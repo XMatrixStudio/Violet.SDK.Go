@@ -2,12 +2,12 @@
 
 ## Installation
 
-### Current Version - v3.0.6
+### Current Version - v3.0.7
 
 **go.mod**
 
 ```
-require gopkg.in/xmatrixstudio/violet.sdk.go.v3 v3.0.6
+require gopkg.in/xmatrixstudio/violet.sdk.go.v3 v3.0.7
 ```
 
 **go get**
